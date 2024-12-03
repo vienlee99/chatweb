@@ -7,11 +7,16 @@ import { AppContext } from "../../Context/AppProvider";
 import { addDocument } from "../../firebase/service";
 import { AuthContext } from "../../Context/AuthProvider";
 import useFirestore from "../../hooks/useFirestore";
+import { UploadOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
+import { storage } from "../../firebase/config";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
-  height: 56px;
+  height: 80px;
   padding: 0 16px;
   align-items: center;
   border-bottom: 1px solid rgb(230, 230, 230);
@@ -29,6 +34,10 @@ const HeaderStyled = styled.div`
     }
 
     &__description {
+      font-size: 12px;
+    }
+
+    &__roomId {
       font-size: 12px;
     }
   }
@@ -123,6 +132,46 @@ export default function ChatWindow() {
     }
   }, [messages]);
 
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    // Create url to save file inFirebase Storage
+    const storageRef = firebase.storage().ref(`chat_files/${file.name}`); // Lấy storage reference
+
+    // Upload file
+    const uploadTask = storageRef.put(file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Tracking upload progress
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+      },
+      (error) => {
+        console.error("Error uploading file:", error);
+      },
+      async () => {
+        // get URL after upload
+        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+        console.log("File available at", downloadURL);
+
+        addDocument("messages", {
+          text: "",
+          uid,
+          photoURL,
+          roomId: selectedRoom.id,
+          displayName,
+          file: {
+            name: file.name,
+            url: downloadURL,
+          },
+        });
+      }
+    );
+  };
+
   return (
     <WrapperStyled>
       {selectedRoom.id ? (
@@ -133,6 +182,14 @@ export default function ChatWindow() {
               <span className="header__description">
                 {selectedRoom.description}
               </span>
+              <div className="room-id-container">
+                <label htmlFor="roomId" style={{ marginRight: "8px" }}>
+                  Room ID:{" "}
+                </label>
+                <span id="rId" className="header__roomId">
+                  {selectedRoom.rId}
+                </span>
+              </div>
             </div>
             <ButtonGroupStyled>
               <Button
@@ -140,7 +197,7 @@ export default function ChatWindow() {
                 type="text"
                 onClick={() => setIsInviteMemberVisible(true)}
               >
-                Mời
+                Add member
               </Button>
               <Avatar.Group size="small" maxCount={2}>
                 {members.map((member) => (
@@ -164,10 +221,21 @@ export default function ChatWindow() {
                   photoURL={mes.photoURL}
                   displayName={mes.displayName}
                   createdAt={mes.createdAt}
+                  file={mes.file}
                 />
               ))}
             </MessageListStyled>
+
             <FormStyled form={form}>
+              <Upload
+                beforeUpload={(file) => {
+                  handleFileUpload(file);
+                  return false;
+                }}
+                showUploadList={false}
+              >
+                <Button icon={<UploadOutlined />} />
+              </Upload>
               <Form.Item name="message">
                 <Input
                   ref={inputRef}
@@ -179,7 +247,7 @@ export default function ChatWindow() {
                 />
               </Form.Item>
               <Button type="primary" onClick={handleOnSubmit}>
-                Gửi
+                Send
               </Button>
             </FormStyled>
           </ContentStyled>

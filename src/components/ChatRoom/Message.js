@@ -35,7 +35,14 @@ function formatDate(seconds) {
   return formattedDate;
 }
 
-export default function Message({ text, displayName, createdAt, photoURL }) {
+export default function Message({
+  text,
+  displayName,
+  createdAt,
+  photoURL,
+  file,
+}) {
+  console.log("file đê: ", file);
   return (
     <WrapperStyled>
       <div>
@@ -48,7 +55,15 @@ export default function Message({ text, displayName, createdAt, photoURL }) {
         </Typography.Text>
       </div>
       <div>
-        <Typography.Text className="content">{text}</Typography.Text>
+        <Typography.Text className="content">
+          {text === "" ? (
+            <a href={file.url} download={file.name}>
+              {file.name}
+            </a>
+          ) : (
+            text
+          )}
+        </Typography.Text>
       </div>
     </WrapperStyled>
   );

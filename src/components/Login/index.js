@@ -31,12 +31,12 @@ export default function Login() {
           <Title style={{ textAlign: "center" }} level={3}>
             Chat Web
           </Title>
-          <Button
+          {/* <Button
             style={{ width: "100%", marginBottom: 5 }}
             onClick={() => handleLogin(googleProvider)}
           >
             Sign In Witth Google
-          </Button>
+          </Button> */}
           <Button
             style={{ width: "100%" }}
             onClick={() => handleLogin(fbProvider)}

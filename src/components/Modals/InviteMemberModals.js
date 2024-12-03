@@ -10,8 +10,6 @@ function DebounceSelect({
   curMembers,
   ...props
 }) {
-  // Search: abcddassdfasdf
-
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState([]);
 
@@ -110,7 +108,7 @@ export default function InviteMemberModal() {
   return (
     <div>
       <Modal
-        title="Mời thêm thành viên"
+        title="Add member"
         visible={isInviteMemberVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -120,9 +118,9 @@ export default function InviteMemberModal() {
           <DebounceSelect
             mode="multiple"
             name="search-user"
-            label="Tên các thành viên"
+            label="Member's name"
             value={value}
-            placeholder="Nhập tên thành viên"
+            placeholder="Input your member's name"
             fetchOptions={fetchUserList}
             onChange={(newValue) => setValue(newValue)}
             style={{ width: "100%" }}

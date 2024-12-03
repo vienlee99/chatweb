@@ -9,9 +9,9 @@ export const addDocument = (collection, data) => {
   });
 };
 
-// tao keywords cho displayName, su dung cho search
+// create keywords for displayName to search
 export const generateKeywords = (displayName) => {
-  // liet ke tat cac hoan vi. vd: name = ["David", "Van", "Teo"]
+  // List all permutation. example: name = ["David", "Van", "Teo"]
   // => ["David", "Van", "Teo"], ["David", "Teo", "Van"], ["Teo", "David", "Van"],...
   const name = displayName.split(" ").filter((word) => word);
 
@@ -21,10 +21,8 @@ export const generateKeywords = (displayName) => {
   let stringArray = [];
 
   /**
-   * khoi tao mang flag false
-   * dung de danh dau xem gia tri
-   * tai vi tri nay da duoc su dung
-   * hay chua
+   * Init flag false array
+   * to mark that have value at this position used or not
    **/
   for (let i = 0; i < length; i++) {
     flagArray[i] = false;
