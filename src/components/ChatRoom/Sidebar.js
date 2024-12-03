@@ -12,17 +12,15 @@ const SidebarStyled = styled.div`
 
 export default function Sidebar() {
   return (
-    <div>
-      <SidebarStyled>
-        <Row>
-          <Col span={24}>
-            <UserInfo />
-          </Col>
-          <Col span={24}>
-            <RoomList />
-          </Col>
-        </Row>
-      </SidebarStyled>
-    </div>
+    <SidebarStyled>
+      <Row>
+        <Col span={24}>
+          <UserInfo />
+        </Col>
+        <Col span={24}>
+          <RoomList />
+        </Col>
+      </Row>
+    </SidebarStyled>
   );
 }

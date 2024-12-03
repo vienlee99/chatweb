@@ -1,41 +1,48 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Form, Modal, Input } from "antd";
-import AppContext from "antd/es/app/context";
+import { AppContext } from "../../Context/AppProvider";
 import { addDocument } from "../../firebase/service";
 import { AuthContext } from "../../Context/AuthProvider";
 
-export default function AddRoomModals({ isVisible, setIsVisible }) {
-  //const { isAddRoomVisible, setIsAddRoomVisible } = useContext(AppContext);
+export default function AddRoomModal() {
+  const { isAddRoomVisible, setIsAddRoomVisible } = useContext(AppContext);
   const {
     user: { uid },
   } = useContext(AuthContext);
   const [form] = Form.useForm();
 
   const handleOk = () => {
-    console.log({ FormData: form.getFieldValue() });
-    addDocument("rooms", { ...form.getFieldValue(), members: [uid] });
+    // handle logic
+    // add new room to firestore
+    addDocument("rooms", { ...form.getFieldsValue(), members: [uid] });
 
+    // reset form value
     form.resetFields();
-    setIsVisible(false);
+
+    setIsAddRoomVisible(false);
   };
+
   const handleCancel = () => {
+    // reset form value
     form.resetFields();
-    setIsVisible(false);
+
+    setIsAddRoomVisible(false);
   };
+
   return (
     <div>
       <Modal
         title="Create room"
-        visible={isVisible}
+        visible={isAddRoomVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical">
           <Form.Item label="Room name" name="name">
-            <Input placeholder="Type your room name"></Input>
+            <Input placeholder="Input your room name" />
           </Form.Item>
           <Form.Item label="Description" name="description">
-            <Input placeholder="Type your description"></Input>
+            <Input.TextArea placeholder="Input your description" />
           </Form.Item>
         </Form>
       </Modal>
